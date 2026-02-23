@@ -444,14 +444,14 @@ function GUI:CreateMain(config)
     -- Minimize GUI
     local function minimizeGUI()
         minimized = true
-        MainFrame.Enabled = false
+        Main.Visible = false
         createFloatingRestoreButton()
     end
 
     -- Restore GUI
     function restoreGUI()
         minimized = false
-        MainFrame.Enabled = true
+        Main.Visible = true
         hideFloatingButton()
     end
 
