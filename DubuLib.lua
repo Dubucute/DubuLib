@@ -103,7 +103,7 @@ function GUI:CreateMain(config)
     Main.BackgroundColor3 = Theme.Background
     Main.BorderSizePixel = 0
     Main.Position = UDim2.new(0.5, 0, 0.5, 0)
-    Main.Size = UDim2.new(0, 680, 0, 450)
+    Main.Size = UDim2.new(0, 700, 0, 500)
     Main.AnchorPoint = Vector2.new(0.5, 0.5)
 
     local MainCorner = Instance.new("UICorner")
@@ -258,7 +258,7 @@ function GUI:CreateMain(config)
 
     -- Auto-update canvas size based on content
     ThemeList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        ScrollTheme.CanvasSize = UDim2.new(0, 0, 0, ThemeList.AbsoluteContentSize.Y)
+        ScrollTheme.CanvasSize = UDim2.new(0, 0, 0, ThemeList.AbsoluteContentSize.Y + 20)
     end)
 
     MainFrame.Parent = game:GetService("CoreGui").RobloxGui
@@ -533,7 +533,7 @@ function GUI:CreateTab(name, icon)
 
     -- Auto-update canvas size based on content
     TabList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        TabContent.CanvasSize = UDim2.new(0, 0, 0, TabList.AbsoluteContentSize.Y)
+        TabContent.CanvasSize = UDim2.new(0, 0, 0, TabList.AbsoluteContentSize.Y + 20)
     end)
 
     local function hideAllTabs()
@@ -567,7 +567,28 @@ function GUI:CreateTab(name, icon)
 
     TabContent.ScrollCanvasPosition = Vector2.new(0, 0)
 
+    -- Force update canvas size after a frame
+    task.wait()
+    local listLayout = TabList
+    if listLayout and listLayout.AbsoluteContentSize then
+        TabContent.CanvasSize = UDim2.new(0, 0, 0, math.max(listLayout.AbsoluteContentSize.Y + 20, 1))
+    end
+
     return TabContent
+end
+
+function GUI:UpdateAllCanvasSizes()
+    -- Force update all scrolling frames to show all content
+    if self.Content then
+        for _, child in ipairs(self.Content:GetChildren()) do
+            if child:IsA("ScrollingFrame") then
+                local layout = child:FindFirstChild("UIListLayout")
+                if layout then
+                    child.CanvasSize = UDim2.new(0, 0, 0, math.max(layout.AbsoluteContentSize.Y + 20, 1))
+                end
+            end
+        end
+    end
 end
 
 function GUI:CreateSection(config)
