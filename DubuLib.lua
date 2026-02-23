@@ -137,7 +137,7 @@ function GUI:CreateMain(config)
     TitleLabel.Parent = TitleBar
     TitleLabel.BackgroundTransparency = 1
     TitleLabel.Position = UDim2.new(0, 15, 0, 0)
-    TitleLabel.Size = UDim2.new(1, -30, 1, 0)
+    TitleLabel.Size = UDim2.new(1, -120, 1, 0)
     TitleLabel.Font = Enum.Font.GothamBold
     TitleLabel.Text = settings.title
     TitleLabel.TextColor3 = Theme.Text
@@ -148,23 +148,55 @@ function GUI:CreateMain(config)
     CloseButton.Name = "CloseButton"
     CloseButton.Parent = TitleBar
     CloseButton.BackgroundTransparency = 1
-    CloseButton.Position = UDim2.new(1, -40, 0.5, 0)
+    CloseButton.Position = UDim2.new(1, -40, 0.5, -15)
     CloseButton.Size = UDim2.new(0, 30, 0, 30)
     CloseButton.Font = Enum.Font.Gotham
     CloseButton.Text = "✕"
     CloseButton.TextColor3 = Theme.TextSecondary
     CloseButton.TextSize = 16
+    CloseButton.ZIndex = 10
     
     local MinimizeButton = Instance.new("TextButton")
     MinimizeButton.Name = "MinimizeButton"
     MinimizeButton.Parent = TitleBar
     MinimizeButton.BackgroundTransparency = 1
-    MinimizeButton.Position = UDim2.new(1, -70, 0.5, 0)
+    MinimizeButton.Position = UDim2.new(1, -70, 0.5, -15)
     MinimizeButton.Size = UDim2.new(0, 30, 0, 30)
     MinimizeButton.Font = Enum.Font.Gotham
     MinimizeButton.Text = "─"
     MinimizeButton.TextColor3 = Theme.TextSecondary
     MinimizeButton.TextSize = 16
+    MinimizeButton.ZIndex = 10
+
+    -- Add hover effects to MinimizeButton
+    MinimizeButton.MouseEnter:Connect(function()
+        TweenService:Create(MinimizeButton, TweenInfo.new(0.2), {
+            TextColor3 = Theme.Accent,
+            TextSize = 18
+        }):Play()
+    end)
+
+    MinimizeButton.MouseLeave:Connect(function()
+        TweenService:Create(MinimizeButton, TweenInfo.new(0.2), {
+            TextColor3 = Theme.TextSecondary,
+            TextSize = 16
+        }):Play()
+    end)
+
+    -- Add hover effects to CloseButton
+    CloseButton.MouseEnter:Connect(function()
+        TweenService:Create(CloseButton, TweenInfo.new(0.2), {
+            TextColor3 = Theme.Error,
+            TextSize = 18
+        }):Play()
+    end)
+
+    CloseButton.MouseLeave:Connect(function()
+        TweenService:Create(CloseButton, TweenInfo.new(0.2), {
+            TextColor3 = Theme.TextSecondary,
+            TextSize = 16
+        }):Play()
+    end)
 
     -- Navigation
     local NavBar = Instance.new("Frame")
@@ -207,8 +239,14 @@ function GUI:CreateMain(config)
     ScrollTheme.BorderSizePixel = 0
     ScrollTheme.Position = UDim2.new(0, 10, 0, 10)
     ScrollTheme.Size = UDim2.new(1, -20, 1, -20)
-    ScrollTheme.ScrollBarThickness = 4
+    ScrollTheme.ScrollBarThickness = 6
     ScrollTheme.ScrollBarImageColor3 = Theme.Accent
+    ScrollTheme.CanvasSize = UDim2.new(0, 0, 0, 1)
+    
+    -- Create scrollbar padding to make it look better
+    local ScrollPadding = Instance.new("UIPadding")
+    ScrollPadding.Parent = ScrollTheme
+    ScrollPadding.PaddingRight = UDim.new(0, 3)
 
     local ThemeList = Instance.new("UIListLayout")
     ThemeList.Parent = ScrollTheme
@@ -406,14 +444,14 @@ function GUI:CreateMain(config)
     -- Minimize GUI
     local function minimizeGUI()
         minimized = true
-        MainFrame.Visible = false
+        MainFrame.Enabled = false
         createFloatingRestoreButton()
     end
 
     -- Restore GUI
     function restoreGUI()
         minimized = false
-        MainFrame.Visible = true
+        MainFrame.Enabled = true
         hideFloatingButton()
     end
 
@@ -452,6 +490,23 @@ function GUI:CreateTab(name, icon)
     TabCorner.CornerRadius = UDim.new(0, 6)
     TabCorner.Parent = TabButton
 
+    -- Add hover effects to TabButton
+    TabButton.MouseEnter:Connect(function()
+        if TabButton.BackgroundColor3 ~= Theme.Accent then
+            TweenService:Create(TabButton, TweenInfo.new(0.2), {
+                BackgroundColor3 = Theme.Surface
+            }):Play()
+        end
+    end)
+
+    TabButton.MouseLeave:Connect(function()
+        if TabButton.BackgroundColor3 ~= Theme.Accent then
+            TweenService:Create(TabButton, TweenInfo.new(0.2), {
+                BackgroundColor3 = Theme.Secondary
+            }):Play()
+        end
+    end)
+
     local TabContent = Instance.new("ScrollingFrame")
     TabContent.Name = name .. "Content"
     TabContent.Parent = self.Content
@@ -459,7 +514,7 @@ function GUI:CreateTab(name, icon)
     TabContent.BorderSizePixel = 0
     TabContent.Position = UDim2.new(0, 10, 0, 10)
     TabContent.Size = UDim2.new(1, -20, 1, -20)
-    TabContent.ScrollBarThickness = 4
+    TabContent.ScrollBarThickness = 6
     TabContent.ScrollBarImageColor3 = Theme.Accent
     TabContent.Visible = false
 
@@ -818,7 +873,7 @@ function GUI:CreateDropdown(config)
     DropdownScroll.BorderSizePixel = 0
     DropdownScroll.Position = UDim2.new(0, 5, 0, 5)
     DropdownScroll.Size = UDim2.new(1, -10, 1, -10)
-    DropdownScroll.ScrollBarThickness = 4
+    DropdownScroll.ScrollBarThickness = 5
     DropdownScroll.ScrollBarImageColor3 = Theme.Accent
 
     local DropdownListLayout = Instance.new("UIListLayout")
