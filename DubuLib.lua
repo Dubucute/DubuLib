@@ -241,7 +241,6 @@ function GUI:CreateMain(config)
     ScrollTheme.Size = UDim2.new(1, -20, 1, -20)
     ScrollTheme.ScrollBarThickness = 6
     ScrollTheme.ScrollBarImageColor3 = Theme.Accent
-    ScrollTheme.CanvasSize = UDim2.new(0, 0, 0, 1)
     
     -- Create scrollbar padding to make it look better
     local ScrollPadding = Instance.new("UIPadding")
@@ -256,6 +255,11 @@ function GUI:CreateMain(config)
     local ThemePadding = Instance.new("UIPadding")
     ThemePadding.Parent = ScrollTheme
     ThemePadding.PaddingTop = UDim.new(0, 5)
+
+    -- Auto-update canvas size based on content
+    ThemeList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        ScrollTheme.CanvasSize = UDim2.new(0, 0, 0, ThemeList.AbsoluteContentSize.Y)
+    end)
 
     MainFrame.Parent = game:GetService("CoreGui").RobloxGui
 
@@ -526,6 +530,11 @@ function GUI:CreateTab(name, icon)
     local TabPadding = Instance.new("UIPadding")
     TabPadding.Parent = TabContent
     TabPadding.PaddingTop = UDim.new(0, 5)
+
+    -- Auto-update canvas size based on content
+    TabList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabContent.CanvasSize = UDim2.new(0, 0, 0, TabList.AbsoluteContentSize.Y)
+    end)
 
     local function hideAllTabs()
         for _, child in ipairs(self.Content:GetChildren()) do
